@@ -1,0 +1,27 @@
+connectors:
+  AIR:
+    type: RJ45
+    subtype: male
+    pinlabels: [pin-1, pin-2, pin-3, pin-4, pin-5, pin-6, pin-7, pin-8, Shield]
+    pins: [1, 2, 3, 4, 5, 6, 7, 8, s]
+  AIR_VALVE:
+    type: Strands
+    subtype: male
+    pinlabels: [pin-1, pin-2]
+
+cables:
+  W1:
+    gauge: 0.25 mm2
+    length: 0.2
+    colors: [BN, BNWH, GN, BUWH, BU, GNWH, OG, OGWH]
+    wirecount: 8
+    shield: true
+
+connections:
+  -
+    - AIR: [1,2,3,6]
+    - W1: [1,2,3,6]
+    - AIR_VALVE: [1,2,1,2]
+  -
+    - AIR: [4,5,6,7,8,s]
+    - W1: [4,5,6,7,8,s]
