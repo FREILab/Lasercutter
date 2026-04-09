@@ -1,0 +1,44 @@
+name: Generate D2 Diagrams
+
+on:
+  push:
+    paths:
+      - 'Elektronik/Wiring_Plan/**.d2'
+      - 'scripts/generate_diagrams.py'
+      - 'platformio.ini'
+  workflow_dispatch: # Erlaubt das manuelle Starten unter "Actions"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Install D2
+        run: |
+          curl -fsSL https://d2lang.com/install.sh | sh -s --
+          # Prüfen ob D2 im Path ist
+          d2 --version
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install PlatformIO
+        run: |
+          python -m pip install --upgrade pip
+          pip install platformio
+
+      - name: Generate Diagrams via PIO
+        run: pio run -t generate_docs
+
+      - name: Commit and Push changes
+        run: |
+          git config --local user.email "github-actions[bot]@users.noreply.github.com"
+          git config --local user.name "github-actions[bot]"
+          git add Elektronik/Wiring_Plan/*.svg Elektronik/Wiring_Plan/*.png
+          # Nur committen, wenn es Änderungen gibt, um Fehler zu vermeiden
+          git diff --quiet && git diff --staged --quiet || (git commit -m "docs: auto-generate diagrams [skip ci]" && git push)
