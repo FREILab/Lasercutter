@@ -132,9 +132,10 @@ Ruida_644.CN5.L-ON1 -> Laser_PSU.TL: "Laser-Fire" {class: kabel_standard}
 Ruida_644.CN5.LPWM1 -> Laser_PSU.IN: "PWM" {class: kabel_standard}
 
 
-
-
-
+# Bauteile
+Resistor_10k_test: 10k { class: widerstand }
+Ruida_644.CN5.GND -- Resistor_10k_test { class: kabel_standard }
+Ruida_644.CN6.GND -- Resistor_10k_test { class: kabel_standard }
 
 # Laser PSU
 Laser_PSU: {
@@ -147,12 +148,12 @@ Laser_PSU: {
   GND: { shape: circle }
 }
 
-# 3. Bauteile (einfach Klasse zuweisen)
+# Bauteile
 Bruecke_Laser_IN_5V: 0R { class: jumper }
 Resistor_10k_Laser_IN_WP: 10k { class: widerstand }
 Resistor_10k_Laser_TH_GND: 10k { class: widerstand }
 
-# 4. Verbindungen
+# Verbindungen
 Laser_PSU.IN -- Resistor_10k_Laser_IN_WP { class: kabel_standard }
 Laser_PSU.WP -- Resistor_10k_Laser_IN_WP { class: kabel_standard }
 
