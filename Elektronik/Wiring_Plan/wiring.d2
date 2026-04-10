@@ -4,16 +4,14 @@ vars: {
   }
 }
 
-direction: down
+direction: right
 
 # Globaler Hintergrund
-style: {
-  fill: "#f4f4f9"
-}
+style.fill: "#f4f4f9"
 
 # 1. Styles & Klassen
 classes: {
-  kabel_standard: { style: { stroke: "#000000"; stroke-width: 3 } }
+  kabel_standard: { style.stroke: "#000000"; style.stroke-width: 3 }
   
   pin: {
     shape: rectangle
@@ -27,7 +25,7 @@ classes: {
     style: { 
       stroke: "#7f8c8d"
       stroke-width: 1
-      stroke-dash: 5
+      stroke-dash: 5 
       fill: transparent 
     }
   }
@@ -53,15 +51,16 @@ Ruida_644: { class: core_component; label: "Ruida RDC644G/S" }
 
 Ruida_644.CN1: { class: connector_group }
 Ruida_644.CN1."1: GND": { class: pin }
-Ruida_644.CN1."2: OUT2": { class: pin }
-Ruida_644.CN1."3: OUT1": { class: pin }
-Ruida_644.CN1."4: STATUS": { class: pin }
-Ruida_644.CN1."5: WIND": { class: pin }
 Ruida_644.CN1."6: +24V": { class: pin }
 
 Ruida_644.CN2: { class: connector_group }
 Ruida_644.CN2."1: GND": { class: pin }
 Ruida_644.CN2."6: +24V": { class: pin }
+
+Ruida_644.CN4: { class: connector_group; label: "CN4: Limits" }
+Ruida_644.CN4."1: GND": { class: pin }
+Ruida_644.CN4."4: LMTX-": { class: pin }
+Ruida_644.CN4."2: LMTY-": { class: pin }
 
 Ruida_644.AXISX: { class: connector_group }
 Ruida_644.AXISX."1: DIR_X": { class: pin }
@@ -78,7 +77,7 @@ Ruida_644.CN5.GND: { class: pin; label: "1: GND" }
 Ruida_644.CN5.LON1: { class: pin; label: "2: L-ON1" }
 Ruida_644.CN5.LPWM1: { class: pin; label: "3: LPWM1" }
 
-# --- TREIBER X ---
+# --- MOTORTREIBER X ---
 DM860T_X: { class: complex_device; label: "DM860T (X)" }
 DM860T_X.P1: { class: connector_group; label: "P1: Control" }
 DM860T_X.P1."PUL+": { class: pin }
@@ -92,7 +91,7 @@ DM860T_X.P3."A-": { class: pin }
 DM860T_X.P3."B+": { class: pin }
 DM860T_X.P3."B-": { class: pin }
 
-# --- TREIBER Y ---
+# --- MOTORTREIBER Y ---
 DM860T_Y: { class: complex_device; label: "DM860T (Y)" }
 DM860T_Y.P1: { class: connector_group; label: "P1: Control" }
 DM860T_Y.P1."PUL+": { class: pin }
@@ -108,16 +107,12 @@ DM860T_Y.P3."B-": { class: pin }
 
 # --- MOTOREN ---
 Stepper_X: { class: end_device; label: "X-Stepper: ST4118M1206-A" }
-Stepper_X."A+": { class: pin }
-Stepper_X."A-": { class: pin }
-Stepper_X."B+": { class: pin }
-Stepper_X."B-": { class: pin }
+Stepper_X."A+": { class: pin }; Stepper_X."A-": { class: pin }
+Stepper_X."B+": { class: pin }; Stepper_X."B-": { class: pin }
 
 Stepper_Y: { class: end_device; label: "Y-Stepper: PKP266D28A2" }
-Stepper_Y."A+": { class: pin }
-Stepper_Y."A-": { class: pin }
-Stepper_Y."B+": { class: pin }
-Stepper_Y."B-": { class: pin }
+Stepper_Y."A+": { class: pin }; Stepper_Y."A-": { class: pin }
+Stepper_Y."B+": { class: pin }; Stepper_Y."B-": { class: pin }
 
 # --- LASER PSU ---
 Laser_PSU: { class: complex_device; label: "Laser PSU" }
