@@ -6,264 +6,168 @@ vars: {
 
 direction: right
 
-# 1. Styles zentral definieren
+# 1. Styles & Klassen definieren
 classes: {
-  kabel_standard: {
-    style: { stroke: "#000000"; stroke-width: 3 }
-  }
-  kabel_orange: {
-    style: { stroke: "#e67e22"; stroke-width: 3 }
-  }
-  widerstand: {
-    shape: parallelogram
-    style.fill: "#9b59b6"
-  }
-  jumper: {
-    shape: parallelogram
-    style.fill: "#f1c40f"
-  }
+  # Kabel
+  kabel_standard: { style: { stroke: "#000000"; stroke-width: 3 } }
+  kabel_orange: { style: { stroke: "#e67e22"; stroke-width: 3 } }
+  
+  # Bauteile
+  widerstand: { shape: parallelogram; style.fill: "#9b59b6" }
+  jumper: { shape: parallelogram; style.fill: "#f1c40f" }
   pin: {
     shape: rectangle
-    # Feste Dimensionen garantieren identische Kreise
     width: 80
     height: 40
-    style: {
-      font-size: 14
-    }
+    style: { font-size: 14 }
+  }
+
+  # Geräte-Kategorien
+  core_component: {
+    shape: package
+    style: { stroke: "#ff0000"; stroke-width: 4 } # Roter Rahmen
+  }
+  complex_device: {
+    shape: package
+    style: { stroke: "#0000ff"; stroke-width: 3 } # Blauer Rahmen
+  }
+  end_device: {
+    shape: package
+    style: { stroke: "#000000"; stroke-width: 2 } # Schwarzer Rahmen
   }
 }
+
+# --- KOMPONENTEN ---
 
 # Ruida Controller
 Ruida_644: {
+  class: core_component
   label: "Ruida RDC644G/S"
-  style: { stroke: "#007AFF"; stroke-width: 3 }
-  shape: rectangle
 
-  # General /Dedicated Output Port CN1
   CN1: {
-    "1: GND": { class: pin }
-    "2: OUT2": { class: pin }
-    "3: OUT1": { class: pin }
-    "4: STATUS": { class: pin }
-    "5: WIND": { class: pin }
-    "6: +24V": { class: pin }
+    "1: GND": { class: pin }; "2: OUT2": { class: pin }; "3: OUT1": { class: pin }
+    "4: STATUS": { class: pin }; "5: WIND": { class: pin }; "6: +24V": { class: pin }
   }
-
-  # General /Dedicated Input Port CN2
   CN2: {
-    "1: GND": { class: pin }
-    "2: FOOTSW": { class: pin }
-    "3: DRPROC": { class: pin }
-    "4: SHOT": { class: pin }
-    "5: IN1": { class: pin }
-    "6: +24V": { class: pin }
+    "1: GND": { class: pin }; "2: FOOTSW": { class: pin }; "3: DRPROC": { class: pin }
+    "4: SHOT": { class: pin }; "5: IN1": { class: pin }; "6: +24V": { class: pin }
   }
-
-  # 4-axis limit Input Interface CN3/CN4
   CN3: {
-    "1: GND": { class: pin }
-    "2: LMTU-": { class: pin }
-    "3: LMTU+": { class: pin }
-    "4: LMTZ-": { class: pin }
-    "5: LMTZ+": { class: pin }
-    "6: +5V": { class: pin }
+    "1: GND": { class: pin }; "2: LMTU-": { class: pin }; "3: LMTU+": { class: pin }
+    "4: LMTZ-": { class: pin }; "5: LMTZ+": { class: pin }; "6: +5V": { class: pin }
   }
-
-  # 4-axis limit Input Interface CN3/CN4
   CN4: {
-    "1: GND": { class: pin }
-    "2: LMTY-": { class: pin }
-    "3: LMTY+": { class: pin }
-    "4: LMTX-": { class: pin }
-    "5: LMTX+": { class: pin }
-    "6: +5V": { class: pin }
+    "1: GND": { class: pin }; "2: LMTY-": { class: pin }; "3: LMTY+": { class: pin }
+    "4: LMTX-": { class: pin }; "5: LMTX+": { class: pin }; "6: +5V": { class: pin }
   }
-
-  # X/Y/Z/U-axis Motor Driver Interface AXIS_X~AXIS_U
   AXISX: {
-    "1: DIR_X": { class: pin }
-    "2: PUL_X": { class: pin }
-    "3: +5V_X": { class: pin }
+    "1: DIR_X": { class: pin }; "2: PUL_X": { class: pin }; "3: +5V_X": { class: pin }
   }
-
-  # X/Y/Z/U-axis Motor Driver Interface AXIS_X~AXIS_U
   AXISY: {
-    "1: DIR_Y": { class: pin }
-    "2: PUL_Y": { class: pin }
-    "3: +5V_Y": { class: pin }
+    "1: DIR_Y": { class: pin }; "2: PUL_Y": { class: pin }; "3: +5V_Y": { class: pin }
   }
-  
-  # X/Y/Z/U-axis Motor Driver Interface AXIS_X~AXIS_U
-  AXISZ: {
-    "1: DIR_Z": { class: pin }
-    "2: PUL_Z": { class: pin }
-    "3: +5V_Z": { class: pin }
-  }
-
-  # X/Y/Z/U-axis Motor Driver Interface AXIS_X~AXIS_U
-  AXISU: {
-    "1: DIR_U": { class: pin }
-    "2: PUL_U": { class: pin }
-    "3: +5V_U": { class: pin }
-  }
-
-  # Laser Power Control Interface CN5/CN6
   CN5: {
-    "1: GND": { class: pin }
-    "2: L-ON1": { class: pin }
-    "3: LPWM1": { class: pin }
-    "4: WP1": { class: pin }
-    "5: L-AN1": { class: pin }
-  }
-
-  # Laser Power Control Interface CN5/CN6
-  CN6: {
-    "1: GND": { class: pin }
-    "2: L-ON2": { class: pin }
-    "3: LPWM2": { class: pin }
-    "4: WP2": { class: pin }
-    "5: L-AN2": { class: pin }
+    "1: GND": { class: pin }; "2: L-ON1": { class: pin }; "3: LPWM1": { class: pin }
+    "4: WP1": { class: pin }; "5: L-AN1": { class: pin }
   }
 }
 
-# Verbindungen zur Laser PSU
-Ruida_644.CN5.GND -> Laser_PSU.GND: "GND" {class: kabel_standard}
-Ruida_644.CN5.L-ON1 -> Laser_PSU.TL: "Laser-Fire" {class: kabel_standard}
-Ruida_644.CN5.LPWM1 -> Laser_PSU.IN: "PWM" {class: kabel_standard}
-
-
-# Laser PSU
-Laser_PSU: {
-  "5V": { shape: circle }
-  IN: { shape: circle }
-  TL: { shape: circle }
-  WP: { shape: circle }
-  TH: { shape: circle }
-  GND: { shape: circle }
-}
-
-
-
-
-# Motor Driver X-Axis
+# Motor Treiber
 DM860T_X: {
+  class: complex_device
   label: "DM860T (X)"
-  style: { stroke: "#2ecc71"; stroke-width: 3 }
-
-  # P1 Control Connector
   P1: {
-    label: "P1: Control Connector"
-    "PUL+": { class: pin }
-    "PUL-": { class: pin }
-    "DIR+": { class: pin }
-    "DIR-": { class: pin }
-    "ENA+": { class: pin }
-    "ENA-": { class: pin }
+    label: "P1: Control"
+    "PUL+": { class: pin }; "PUL-": { class: pin }
+    "DIR+": { class: pin }; "DIR-": { class: pin }
+    "ENA+": { class: pin }; "ENA-": { class: pin }
   }
-
-  # P2 Fault Output Connector
-  P2: {
-    label: "P2: Fault Output Connector"
-    "BRK+": { class: pin }
-    "BRK-": { class: pin }
-    "ALM+": { class: pin }
-    "ALM-": { class: pin }
-  }
-
-  # P3 Motor and Power Supply Connector
   P3: {
-    label: "P3: Motor and Power Supply Connector"
-    "A+": { class: pin }
-    "A-": { class: pin }
-    "B+": { class: pin }
-    "B-": { class: pin }
+    label: "P3: Motor/Power"
+    "A+": { class: pin }; "A-": { class: pin }
+    "B+": { class: pin }; "B-": { class: pin }
     "AC_1": { class: pin; label: "AC" }
     "AC_2": { class: pin; label: "AC" }
   }
 }
 
-# Motor Driver Y-Axis
 DM860T_Y: {
+  class: complex_device
   label: "DM860T (Y)"
-  style: { stroke: "#2ecc71"; stroke-width: 3 }
-
   P1: {
-    label: "P1: Control Connector"
-    "PUL+": { class: pin }
-    "PUL-": { class: pin }
-    "DIR+": { class: pin }
-    "DIR-": { class: pin }
-    "ENA+": { class: pin }
-    "ENA-": { class: pin }
+    label: "P1: Control"
+    "PUL+": { class: pin }; "PUL-": { class: pin }
+    "DIR+": { class: pin }; "DIR-": { class: pin }
   }
-
-  P2: {
-    label: "P2: Fault Output Connector"
-    "BRK+": { class: pin }
-    "BRK-": { class: pin }
-    "ALM+": { class: pin }
-    "ALM-": { class: pin }
-  }
-
   P3: {
-    label: "P3: Motor and Power Supply Connector"
-    "A+": { class: pin }
-    "A-": { class: pin }
-    "B+": { class: pin }
-    "B-": { class: pin }
+    label: "P3: Motor/Power"
+    "A+": { class: pin }; "A-": { class: pin }
+    "B+": { class: pin }; "B-": { class: pin }
     "AC_1": { class: pin; label: "AC" }
     "AC_2": { class: pin; label: "AC" }
   }
 }
 
-# Stepper Motors
+# Schrittmotoren
 Stepper_X: {
+  class: end_device
   label: "X-Stepper: ST4118M1206-A"
   "A+": { class: pin }; "A-": { class: pin }
   "B+": { class: pin }; "B-": { class: pin }
 }
 
 Stepper_Y: {
+  class: end_device
   label: "Y-Stepper: PKP266D28A2"
   "A+": { class: pin }; "A-": { class: pin }
   "B+": { class: pin }; "B-": { class: pin }
 }
 
-# Bauteile
+# Laser PSU
+Laser_PSU: {
+  shape: package
+  "5V": { class: pin }
+  IN: { class: pin }
+  TL: { class: pin }
+  WP: { class: pin }
+  TH: { class: pin }
+  GND: { class: pin }
+}
+
+# Passive Bauteile
 Bruecke_Laser_IN_5V: 0R { class: jumper }
 Resistor_10k_Laser_IN_WP: 10k { class: widerstand }
 Resistor_10k_Laser_TH_GND: 10k { class: widerstand }
 
 # --- VERBINDUNGEN ---
 
-# 1. X-Axis Wiring
-Ruida_644.AXISX."3: +5V_X" -> DM860T_X.P1."PUL+": "5V Common" {class: kabel_standard}
-Ruida_644.AXISX."3: +5V_X" -> DM860T_X.P1."DIR+": "5V Common" {class: kabel_standard}
+# X-Achse (Common Anode)
+Ruida_644.AXISX."3: +5V_X" -> DM860T_X.P1."PUL+": "5V Com" {class: kabel_standard}
+Ruida_644.AXISX."3: +5V_X" -> DM860T_X.P1."DIR+": "5V Com" {class: kabel_standard}
 Ruida_644.AXISX."2: PUL_X" -> DM860T_X.P1."PUL-": "Pulse" {class: kabel_standard}
-Ruida_644.AXISX."1: DIR_X" -> DM860T_X.P1."DIR-": "Direction" {class: kabel_standard}
+Ruida_644.AXISX."1: DIR_X" -> DM860T_X.P1."DIR-": "Dir" {class: kabel_standard}
 
 DM860T_X.P3."A+" -> Stepper_X."A+" {class: kabel_standard}
 DM860T_X.P3."A-" -> Stepper_X."A-" {class: kabel_standard}
 DM860T_X.P3."B+" -> Stepper_X."B+" {class: kabel_standard}
 DM860T_X.P3."B-" -> Stepper_X."B-" {class: kabel_standard}
 
-# 2. Y-Axis Wiring
-Ruida_644.AXISY."3: +5V_Y" -> DM860T_Y.P1."PUL+": "5V Common" {class: kabel_standard}
-Ruida_644.AXISY."3: +5V_Y" -> DM860T_Y.P1."DIR+": "5V Common" {class: kabel_standard}
+# Y-Achse (Common Anode)
+Ruida_644.AXISY."3: +5V_Y" -> DM860T_Y.P1."PUL+": "5V Com" {class: kabel_standard}
+Ruida_644.AXISY."3: +5V_Y" -> DM860T_Y.P1."DIR+": "5V Com" {class: kabel_standard}
 Ruida_644.AXISY."2: PUL_Y" -> DM860T_Y.P1."PUL-": "Pulse" {class: kabel_standard}
-Ruida_644.AXISY."1: DIR_Y" -> DM860T_Y.P1."DIR-": "Direction" {class: kabel_standard}
+Ruida_644.AXISY."1: DIR_Y" -> DM860T_Y.P1."DIR-": "Dir" {class: kabel_standard}
 
 DM860T_Y.P3."A+" -> Stepper_Y."A+" {class: kabel_standard}
 DM860T_Y.P3."A-" -> Stepper_Y."A-" {class: kabel_standard}
 DM860T_Y.P3."B+" -> Stepper_Y."B+" {class: kabel_standard}
 DM860T_Y.P3."B-" -> Stepper_Y."B-" {class: kabel_standard}
 
-# 3. Laser Control [cite: 9]
+# Laser Steuerung & Beschaltung
 Ruida_644.CN5.GND -> Laser_PSU.GND: "GND" {class: kabel_standard}
-Ruida_644.CN5.L-ON1 -> Laser_PSU.TL: "Laser-Fire" {class: kabel_standard}
+Ruida_644.CN5.L-ON1 -> Laser_PSU.TL: "Fire" {class: kabel_standard}
 Ruida_644.CN5.LPWM1 -> Laser_PSU.IN: "PWM" {class: kabel_standard}
 
-# 4. PSU Interne Beschaltung
 Laser_PSU.IN -- Resistor_10k_Laser_IN_WP { class: kabel_standard }
 Laser_PSU.WP -- Resistor_10k_Laser_IN_WP { class: kabel_standard }
 Laser_PSU.TH -- Resistor_10k_Laser_TH_GND { class: kabel_standard }
