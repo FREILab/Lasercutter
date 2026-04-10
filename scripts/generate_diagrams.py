@@ -5,7 +5,6 @@ from os.path import join, isdir
 
 Import("env")
 
-# Pfad relativ zur platformio.ini
 DIAG_DIR = join("Elektronik", "Wiring_Plan")
 
 def build_d2_diagrams(source, target, env):
@@ -16,44 +15,43 @@ def build_d2_diagrams(source, target, env):
         print(f"\n[D2-INFO] Verzeichnis nicht gefunden: {abs_diag_dir}")
         return
 
-    print(f"\n[D2-INFO] Starte Export-Vorgang (SVG, PNG, PNG-Trans)...")
+    print(f"\n[D2-INFO] Starte Export-Vorgang...")
     
     files_processed = 0
     for file in listdir(abs_diag_dir):
         if file.endswith(".d2"):
-            base_name = file.replace(".d2", "")
             input_file = join(abs_diag_dir, file)
+            base_name = file.replace(".d2", "")
             
-            # Export-Pfade
-            out_svg = join(abs_diag_dir, f"{base_name}.svg")
-            out_png = join(abs_diag_dir, f"{base_name}.png")
-            out_png_trans = join(abs_diag_dir, f"{base_name}_transparent.png")
+            # Export-Formate
+            formats = [
+                {"ext": "svg", "args": []},
+                {"ext": "png", "args": ["--theme", "200"]}, # Theme 200 ist meist neutral/hell
+                {"ext": "transparent.png", "args": ["--transparent"]}
+            ]
             
-            try:
-                # 1. SVG (Standard)
-                subprocess.run(["d2", input_file, out_svg], check=True)
+            for fmt in formats:
+                output_file = join(abs_diag_dir, f"{base_name}.{fmt['ext']}")
+                cmd = ["d2"] + fmt["args"] + [input_file, output_file]
                 
-                # 2. PNG (Solid - nutzt Standard-Hintergrund des Themes, meist weiß)
-                # Wir erzwingen Theme 0 (Neutral), damit es sicher hell ist
-                subprocess.run(["d2", "--theme", "0", input_file, out_png], check=True)
-                
-                # 3. PNG (Transparent)
-                subprocess.run(["d2", "--transparent", input_file, out_png_trans], check=True)
-                
-                print(f"  >> ERFOLG: {file} -> [SVG, PNG, PNG-Trans]")
-                files_processed += 1
-            except Exception as e:
-                print(f"  >> FEHLER beim Export von {file}: {e}")
+                try:
+                    # Capture_output=True erlaubt uns, die Fehlermeldung von D2 zu lesen
+                    result = subprocess.run(cmd, capture_output=True, text=True, check=True)
+                except subprocess.CalledProcessError as e:
+                    print(f"  >> FEHLER bei {file} ({fmt['ext']}):")
+                    print(f"     Status: {e.returncode}")
+                    print(f"     Meldung: {e.stderr.strip()}")
+                    continue
 
-    if files_processed > 0:
-        print(f"[D2-INFO] Fertig. {files_processed} Datei(en) verarbeitet.\n")
-    else:
-        print("[D2-INFO] Keine Dateien erfolgreich verarbeitet.\n")
+            print(f"  >> ERFOLG: {file} verarbeitet.")
+            files_processed += 1
+
+    print(f"[D2-INFO] Fertig. {files_processed} Datei(en) verarbeitet.\n")
 
 env.AddCustomTarget(
     name="generate_docs",
     dependencies=None,
     actions=[build_d2_diagrams],
     title="D2: Diagramme rendern",
-    description="Erzeugt SVG und zwei PNG-Varianten"
+    description="Erzeugt SVG und PNG-Varianten"
 )
