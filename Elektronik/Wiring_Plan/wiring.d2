@@ -35,7 +35,6 @@ classes: {
 
 # Ruida Controller
 Ruida_644: {
-  shape: package
   label: "Ruida RDC644G/S"
   style: { stroke: "#007AFF"; stroke-width: 3 }
 
@@ -134,7 +133,6 @@ Ruida_644.CN5.LPWM1 -> Laser_PSU.IN: "PWM" {class: kabel_standard}
 
 # Laser PSU
 Laser_PSU: {
-  shape: package
   "5V": { shape: circle }
   IN: { shape: circle }
   TL: { shape: circle }
@@ -148,7 +146,6 @@ Laser_PSU: {
 
 # Motor Driver X-Axis
 DM860T_X: {
-  shape: package
   label: "DM860T (X)"
   style: { stroke: "#2ecc71"; stroke-width: 3 }
 
@@ -186,7 +183,6 @@ DM860T_X: {
 
 # Motor Driver Y-Axis
 DM860T_Y: {
-  shape: package
   label: "DM860T (Y)"
   style: { stroke: "#2ecc71"; stroke-width: 3 }
 
@@ -221,14 +217,12 @@ DM860T_Y: {
 
 # Stepper Motors
 Stepper_X: {
-  shape: package
   label: "X-Stepper: ST4118M1206-A"
   "A+": { class: pin }; "A-": { class: pin }
   "B+": { class: pin }; "B-": { class: pin }
 }
 
 Stepper_Y: {
-  shape: package
   label: "Y-Stepper: PKP266D28A2"
   "A+": { class: pin }; "A-": { class: pin }
   "B+": { class: pin }; "B-": { class: pin }
