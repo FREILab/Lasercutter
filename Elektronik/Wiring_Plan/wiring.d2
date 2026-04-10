@@ -7,51 +7,51 @@ vars: {
 direction: right
 
 # Globaler Hintergrund des Diagramms
-#style: {
-#  fill: "#f4f4f9"
-#}
+style: {
+  fill: "#f4f4f9"
+}
 
 # 1. Styles & Klassen definieren
 classes: {
   # Kabel
   kabel_standard: { style: { stroke: "#000000"; stroke-width: 3 } }
-  kabel_orange: { style: { stroke: "#e67e22"; stroke-width: 3 } }
   
-  # Bauteile
-  widerstand: { shape: parallelogram; style.fill: "#9b59b6" }
-  jumper: { shape: parallelogram; style.fill: "#f1c40f" }
-  
+  # Pins (die kleinen weißen Boxen)
   pin: {
     shape: rectangle
     width: 80
     height: 40
-    style: { font-size: 14; fill: "#ffffff" }
+    style: { 
+      font-size: 14
+      fill: "#ffffff" # Weiß abgesetzt
+    }
   }
 
-  # Klasse für Anschlussgruppen (CN1, CN2, P1 etc.) - jetzt transparent
+  # Anschlussgruppen (CN1, Terminals, etc.)
+  # WICHTIG: shape: rectangle verhindert den Package-Stil
   connector_group: {
     shape: rectangle
     style: { 
       stroke: "#7f8c8d"
       stroke-width: 1
       stroke-dasharray: 5
-      fill: transparent # Lässt die Farbe des Mutterblocks durchscheinen
+      fill: transparent # Lässt die Farbe des Geräts durchscheinen
     }
   }
 
-  # Geräte-Kategorien
+  # Geräte-Kategorien (alle explizit rectangle)
   core_component: {
     shape: rectangle
     style: { 
       stroke: "#ff0000"; stroke-width: 4
-      fill: "#fff2f2" # Helles Rot für Ruida
+      fill: "#fff2f2" # Helles Rot
     }
   }
   complex_device: {
     shape: rectangle
     style: { 
       stroke: "#0000ff"; stroke-width: 3
-      fill: "#f2f7ff" # Helles Blau für Treiber/PSU
+      fill: "#f2f7ff" # Helles Blau
     }
   }
   end_device: {
@@ -99,25 +99,26 @@ DM860T_Y: {
 Stepper_X: { class: end_device; label: "X-Stepper: ST4118M1206-A"; "A+": { class: pin }; "A-": { class: pin }; "B+": { class: pin }; "B-": { class: pin } }
 Stepper_Y: { class: end_device; label: "Y-Stepper: PKP266D28A2"; "A+": { class: pin }; "A-": { class: pin }; "B+": { class: pin }; "B-": { class: pin } }
 
-# Laser PSU (Jetzt als complex_device mit blauem Rahmen)
+# Laser PSU
 Laser_PSU: {
   class: complex_device
-  shape: rectangle
   label: "Laser PSU"
+  # Hier erzwingen wir nochmal rectangle, falls die Klasse ignoriert wird
+  shape: rectangle 
   Terminals: {
     class: connector_group
     "5V": { class: pin }; IN: { class: pin }; TL: { class: pin }; WP: { class: pin }; TH: { class: pin }; GND: { class: pin }
   }
 }
 
-# Passive Bauteile
-Bruecke_Laser_IN_5V: 0R { class: jumper }
-Resistor_10k_Laser_IN_WP: 10k { class: widerstand }
-Resistor_10k_Laser_TH_GND: 10k { class: widerstand }
+# Passive Bauteile (Schwebend)
+Bruecke_Laser_IN_5V: 0R { shape: parallelogram; style.fill: "#f1c40f" }
+Resistor_10k_Laser_IN_WP: 10k { shape: parallelogram; style.fill: "#9b59b6" }
+Resistor_10k_Laser_TH_GND: 10k { shape: parallelogram; style.fill: "#9b59b6" }
 
 # --- VERBINDUNGEN ---
 
-# X-Achse (Common Anode)
+# X-Achse
 Ruida_644.AXISX."3: +5V_X" -> DM860T_X.P1."PUL+": "5V Com" {class: kabel_standard}
 Ruida_644.AXISX."3: +5V_X" -> DM860T_X.P1."DIR+": "5V Com" {class: kabel_standard}
 Ruida_644.AXISX."2: PUL_X" -> DM860T_X.P1."PUL-": "Pulse" {class: kabel_standard}
@@ -139,7 +140,7 @@ DM860T_Y.P3."A-" -> Stepper_Y."A-" {class: kabel_standard}
 DM860T_Y.P3."B+" -> Stepper_Y."B+" {class: kabel_standard}
 DM860T_Y.P3."B-" -> Stepper_Y."B-" {class: kabel_standard}
 
-# Laser Steuerung (angepasst an neue Laser_PSU Struktur)
+# Laser Control
 Ruida_644.CN5.GND -> Laser_PSU.Terminals.GND: "GND" {class: kabel_standard}
 Ruida_644.CN5.L-ON1 -> Laser_PSU.Terminals.TL: "Fire" {class: kabel_standard}
 Ruida_644.CN5.LPWM1 -> Laser_PSU.Terminals.IN: "PWM" {class: kabel_standard}
