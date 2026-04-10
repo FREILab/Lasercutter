@@ -156,4 +156,42 @@ Laser_PSU.TH -- Resistor_10k_Laser_TH_GND { class: kabel_standard }
 Laser_PSU.GND -- Resistor_10k_Laser_TH_GND { class: kabel_standard }
 
 Laser_PSU.IN -- Bruecke_Laser_IN_5V { class: kabel_standard }
+
+# Motor Driver X-Axis
+DM860T_X: {
+  shape: package
+  label: "DM860T (X)"
+  style: { stroke: "#2ecc71"; stroke-width: 3 }
+
+  # P1 Control Connector
+  P1: {
+    label: "P1: Control Connector"
+    "PUL+": { class: pin }
+    "PUL-": { class: pin }
+    "DIR+": { class: pin }
+    "DIR-": { class: pin }
+    "ENA+": { class: pin }
+    "ENA-": { class: pin }
+  }
+
+  # P2 Fault Output Connector
+  P2: {
+    label: "P2: Fault Output Connector"
+    "BRK+": { class: pin }
+    "BRK-": { class: pin }
+    "ALM+": { class: pin }
+    "ALM-": { class: pin }
+  }
+
+  # P3 Motor and Power Supply Connector
+  P3: {
+    label: "P3: Motor and Power Supply Connector"
+    "A+": { class: pin }
+    "A-": { class: pin }
+    "B+": { class: pin }
+    "B-": { class: pin }
+    "AC_1": { class: pin; label: "AC" }
+    "AC_2": { class: pin; label: "AC" }
+  }
+}
 Laser_PSU.5V -- Bruecke_Laser_IN_5V { class: kabel_standard }
