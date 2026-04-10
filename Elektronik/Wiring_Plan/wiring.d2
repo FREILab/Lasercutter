@@ -31,7 +31,7 @@ classes: {
   }
 
   core_component: {
-    shape: circle
+    shape: rectangle
     style: { stroke: "#ff0000"; stroke-width: 4; fill: "#fff2f2" }
   }
   
@@ -105,15 +105,6 @@ DM860T_Y.P3."A-": { class: pin }
 DM860T_Y.P3."B+": { class: pin }
 DM860T_Y.P3."B-": { class: pin }
 
-# --- MOTOREN ---
-Stepper_X: { class: end_device; label: "X-Stepper: ST4118M1206-A" }
-Stepper_X."A+": { class: pin }; Stepper_X."A-": { class: pin }
-Stepper_X."B+": { class: pin }; Stepper_X."B-": { class: pin }
-
-Stepper_Y: { class: end_device; label: "Y-Stepper: PKP266D28A2" }
-Stepper_Y."A+": { class: pin }; Stepper_Y."A-": { class: pin }
-Stepper_Y."B+": { class: pin }; Stepper_Y."B-": { class: pin }
-
 # --- LASER PSU ---
 Laser_PSU: { class: complex_device; label: "Laser PSU" }
 Laser_PSU.Terminals: { class: connector_group }
@@ -123,6 +114,15 @@ Laser_PSU.Terminals.IN: { class: pin }
 Laser_PSU.Terminals.WP: { class: pin }
 Laser_PSU.Terminals.TH: { class: pin }
 Laser_PSU.Terminals.V5: { class: pin; label: "5V" }
+
+# --- MOTOREN ---
+Stepper_X: { class: end_device; label: "X-Stepper: ST4118M1206-A" }
+Stepper_X."A+": { class: pin }; Stepper_X."A-": { class: pin }
+Stepper_X."B+": { class: pin }; Stepper_X."B-": { class: pin }
+
+Stepper_Y: { class: end_device; label: "Y-Stepper: PKP266D28A2" }
+Stepper_Y."A+": { class: pin }; Stepper_Y."A-": { class: pin }
+Stepper_Y."B+": { class: pin }; Stepper_Y."B-": { class: pin }
 
 # --- VERBINDUNGEN ---
 
