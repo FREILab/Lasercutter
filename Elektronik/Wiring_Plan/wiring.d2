@@ -262,3 +262,11 @@ DM860T_Y.P3."B-" -> Stepper_Y."B-" {class: kabel_standard}
 Ruida_644.CN5.GND -> Laser_PSU.GND: "GND" {class: kabel_standard}
 Ruida_644.CN5.L-ON1 -> Laser_PSU.TL: "Laser-Fire" {class: kabel_standard}
 Ruida_644.CN5.LPWM1 -> Laser_PSU.IN: "PWM" {class: kabel_standard}
+
+# 4. PSU Interne Beschaltung
+Laser_PSU.IN -- Resistor_10k_Laser_IN_WP { class: kabel_standard }
+Laser_PSU.WP -- Resistor_10k_Laser_IN_WP { class: kabel_standard }
+Laser_PSU.TH -- Resistor_10k_Laser_TH_GND { class: kabel_standard }
+Laser_PSU.GND -- Resistor_10k_Laser_TH_GND { class: kabel_standard }
+Laser_PSU.IN -- Bruecke_Laser_IN_5V { class: kabel_standard }
+Laser_PSU.5V -- Bruecke_Laser_IN_5V { class: kabel_standard }
