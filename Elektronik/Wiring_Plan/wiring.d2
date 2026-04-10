@@ -49,33 +49,77 @@ classes: {
 # --- RUIDA CONTROLLER ---
 Ruida_644: { class: core_component; label: "Ruida RDC644G/S" }
 
-Ruida_644.CN1: { class: connector_group }
+# Port CN1: General Output
+Ruida_644.CN1: { class: connector_group; label: "CN1: Output" }
 Ruida_644.CN1."1: GND": { class: pin }
+Ruida_644.CN1."2: OUT2": { class: pin }
+Ruida_644.CN1."3: OUT1": { class: pin }
+Ruida_644.CN1."4: STATUS": { class: pin }
+Ruida_644.CN1."5: WIND": { class: pin }
 Ruida_644.CN1."6: +24V": { class: pin }
 
-Ruida_644.CN2: { class: connector_group }
+# Port CN2: General Input
+Ruida_644.CN2: { class: connector_group; label: "CN2: Input" }
 Ruida_644.CN2."1: GND": { class: pin }
+Ruida_644.CN2."2: FOOTSW": { class: pin }
+Ruida_644.CN2."3: DRPROC": { class: pin }
+Ruida_644.CN2."4: SHOT": { class: pin }
+Ruida_644.CN2."5: IN1": { class: pin }
 Ruida_644.CN2."6: +24V": { class: pin }
 
-Ruida_644.CN4: { class: connector_group; label: "CN4: Limits" }
-Ruida_644.CN4."1: GND": { class: pin }
-Ruida_644.CN4."4: LMTX-": { class: pin }
-Ruida_644.CN4."2: LMTY-": { class: pin }
+# Port CN3: Limit U/Z
+Ruida_644.CN3: { class: connector_group; label: "CN3: Limits U/Z" }
+Ruida_644.CN3."1: GND": { class: pin }
+Ruida_644.CN3."2: LMTU-": { class: pin }
+Ruida_644.CN3."3: LMTU+": { class: pin }
+Ruida_644.CN3."4: LMTZ-": { class: pin }
+Ruida_644.CN3."5: LMTZ+": { class: pin }
+Ruida_644.CN3."6: +5V": { class: pin }
 
-Ruida_644.AXISX: { class: connector_group }
+# Port CN4: Limit X/Y
+Ruida_644.CN4: { class: connector_group; label: "CN4: Limits X/Y" }
+Ruida_644.CN4."1: GND": { class: pin }
+Ruida_644.CN4."2: LMTY-": { class: pin }
+Ruida_644.CN4."3: LMTY+": { class: pin }
+Ruida_644.CN4."4: LMTX-": { class: pin }
+Ruida_644.CN4."5: LMTX+": { class: pin }
+Ruida_644.CN4."6: +5V": { class: pin }
+
+# Achsen-Schnittstellen (X, Y, Z, U)
+Ruida_644.AXISX: { class: connector_group; label: "AXIS X" }
 Ruida_644.AXISX."1: DIR_X": { class: pin }
 Ruida_644.AXISX."2: PUL_X": { class: pin }
 Ruida_644.AXISX."3: +5V_X": { class: pin }
 
-Ruida_644.AXISY: { class: connector_group }
+Ruida_644.AXISY: { class: connector_group; label: "AXIS Y" }
 Ruida_644.AXISY."1: DIR_Y": { class: pin }
 Ruida_644.AXISY."2: PUL_Y": { class: pin }
 Ruida_644.AXISY."3: +5V_Y": { class: pin }
 
-Ruida_644.CN5: { class: connector_group }
-Ruida_644.CN5.GND: { class: pin; label: "1: GND" }
-Ruida_644.CN5.LON1: { class: pin; label: "2: L-ON1" }
-Ruida_644.CN5.LPWM1: { class: pin; label: "3: LPWM1" }
+Ruida_644.AXISZ: { class: connector_group; label: "AXIS Z" }
+Ruida_644.AXISZ."1: DIR_Z": { class: pin }
+Ruida_644.AXISZ."2: PUL_Z": { class: pin }
+Ruida_644.AXISZ."3: +5V_Z": { class: pin }
+
+Ruida_644.AXISU: { class: connector_group; label: "AXIS U" }
+Ruida_644.AXISU."1: DIR_U": { class: pin }
+Ruida_644.AXISU."2: PUL_U": { class: pin }
+Ruida_644.AXISU."3: +5V_U": { class: pin }
+
+# Laser-Steuerung CN5/CN6
+Ruida_644.CN5: { class: connector_group; label: "CN5: Laser 1" }
+Ruida_644.CN5."1: GND": { class: pin }
+Ruida_644.CN5."2: L-ON1": { class: pin }
+Ruida_644.CN5."3: LPWM1": { class: pin }
+Ruida_644.CN5."4: WP1": { class: pin }
+Ruida_644.CN5."5: L-AN1": { class: pin }
+
+Ruida_644.CN6: { class: connector_group; label: "CN6: Laser 2" }
+Ruida_644.CN6."1: GND": { class: pin }
+Ruida_644.CN6."2: L-ON2": { class: pin }
+Ruida_644.CN6."3: LPWM2": { class: pin }
+Ruida_644.CN6."4: WP2": { class: pin }
+Ruida_644.CN6."5: L-AN2": { class: pin }
 
 # --- MOTORTREIBER X ---
 DM860T_X: { class: complex_device; label: "DM860T (X)" }
@@ -84,6 +128,14 @@ DM860T_X.P1."PUL+": { class: pin }
 DM860T_X.P1."PUL-": { class: pin }
 DM860T_X.P1."DIR+": { class: pin }
 DM860T_X.P1."DIR-": { class: pin }
+DM860T_X.P1."ENA+": { class: pin }
+DM860T_X.P1."ENA-": { class: pin }
+
+DM860T_X.P2: { class: connector_group; label: "P2: Fault Output" }
+DM860T_X.P2."BRK+": { class: pin }
+DM860T_X.P2."BRK-": { class: pin }
+DM860T_X.P2."ALM+": { class: pin }
+DM860T_X.P2."ALM-": { class: pin }
 
 DM860T_X.P3: { class: connector_group; label: "P3: Power/Motor" }
 DM860T_X.P3."A+": { class: pin }
@@ -98,6 +150,14 @@ DM860T_Y.P1."PUL+": { class: pin }
 DM860T_Y.P1."PUL-": { class: pin }
 DM860T_Y.P1."DIR+": { class: pin }
 DM860T_Y.P1."DIR-": { class: pin }
+DM860T_Y.P1."ENA+": { class: pin }
+DM860T_Y.P1."ENA-": { class: pin }
+
+DM860T_Y.P2: { class: connector_group; label: "P2: Fault Output" }
+DM860T_Y.P2."BRK+": { class: pin }
+DM860T_Y.P2."BRK-": { class: pin }
+DM860T_Y.P2."ALM+": { class: pin }
+DM860T_Y.P2."ALM-": { class: pin }
 
 DM860T_Y.P3: { class: connector_group; label: "P3: Power/Motor" }
 DM860T_Y.P3."A+": { class: pin }
