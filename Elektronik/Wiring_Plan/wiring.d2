@@ -191,13 +191,20 @@ Stepper_Y."B+": { class: pin }; Stepper_Y."B-": { class: pin }
 
 # --- NETZTEILE und Power Distribution---
 
-# --- GLOBALER STROMANSCHLUSS ---
-Global_Plug.class: end_device
-Global_Plug.label: "Netzanschluss (AC)"
-Global_Plug.Terminals.class: connector_group
-Global_Plug.Terminals.L1.class: pin
-Global_Plug.Terminals.L2.class: pin
-Global_Plug.Terminals.N.class: pin
+# --- SEPARATE STROMVERSORGUNGEN ---
+Supply_1.class: end_device
+Supply_1.label: "Versorgung Phase 1"
+Supply_1.Terminals.class: connector_group
+Supply_1.Terminals.L1.class: pin
+Supply_1.Terminals.N1.class: pin
+Supply_1.Terminals.PE1.class: pin
+
+Supply_2.class: end_device
+Supply_2.label: "Versorgung Phase 2"
+Supply_2.Terminals.class: connector_group
+Supply_2.Terminals.L2.class: pin
+Supply_2.Terminals.N2.class: pin
+Supply_2.Terminals.PE2.class: pin
 
 # --- SCHLÜSSELSCHALTER ---
 Key_Switch.class: end_device
@@ -212,8 +219,10 @@ Key_Switch.Terminals.OUT2.class: pin
 LV_Relais.class: end_device
 LV_Relais.label: "LV Relais"
 LV_Relais.Terminals.class: connector_group
-LV_Relais.Terminals.COM.class: pin
-LV_Relais.Terminals.NO.class: pin
+LV_Relais.Terminals.COM1.class: pin
+LV_Relais.Terminals.NO1.class: pin
+LV_Relais.Terminals.COM2.class: pin
+LV_Relais.Terminals.NO2.class: pin
 LV_Relais.Terminals.COIL1.class: pin
 LV_Relais.Terminals.COIL2.class: pin
 
@@ -291,15 +300,16 @@ PSU_24V.Terminals."24V" -> Ruida_644.CN1."6: +24V": "24V DC" {class: kabel_stand
 PSU_24V.Terminals."0V" -> Ruida_644.CN1."1: GND": "GND" {class: kabel_standard}
 
 # Phase L2 speist den gemeinsamen Kontakt
-Global_Plug.Terminals.L2 -> LV_Relais.Terminals.COM: "Phase L2" {class: kabel_standard}
+Supply_2.Terminals.L2 -> LV_Relais.Terminals.COM1: "Phase L2" {class: kabel_standard}
 
 # Der Schließerkontakt (NO) versorgt beide Netzteile
-LV_Relais.Terminals.NO -> PSU_48V.Terminals.L: "Switched AC" {class: kabel_standard}
-LV_Relais.Terminals.NO -> PSU_24V.Terminals.L: "Switched AC" {class: kabel_standard}
+LV_Relais.Terminals.NO1 -> PSU_48V.Terminals.L: "Switched L2" {class: kabel_standard}
+LV_Relais.Terminals.NO1 -> PSU_24V.Terminals.L: "Switched L2" {class: kabel_standard}
 
 # --- VERBINDUNGEN NEUTRALLEITER ---
-Global_Plug.Terminals.N -> PSU_48V.Terminals.N: "Neutral" {class: kabel_standard}
-Global_Plug.Terminals.N -> PSU_24V.Terminals.N: "Neutral" {class: kabel_standard}
+Supply_2.Terminals.N2 -> LV_Relais.Terminals.COM2: "Neutral N2" {class: kabel_standard}
+LV_Relais.Terminals.NO2 -> PSU_48V.Terminals.N: "Switched N2" {class: kabel_standard}
+LV_Relais.Terminals.NO2 -> PSU_24V.Terminals.N: "Switched N2" {class: kabel_standard}
 
 # Motortreiber 48V Versorgung (X-Achse) [cite: 18, 20]
 PSU_48V.Terminals."+48V" -> DM860T_X.P3.AC1 {class: kabel_standard}
@@ -310,21 +320,17 @@ PSU_48V.Terminals."+48V" -> DM860T_Y.P3.AC1 {class: kabel_standard}
 PSU_48V.Terminals."0V" -> DM860T_Y.P3.AC2 {class: kabel_standard}
 
 # --- VERBINDUNGEN SCHLÜSSELSCHALTER ---
-Global_Plug.Terminals.L1 -> Key_Switch.Terminals.IN1: "Phase L1" {class: kabel_standard}
-Global_Plug.Terminals.N -> Key_Switch.Terminals.IN2: "Neutralleiter N" {class: kabel_standard}
+Supply_1.Terminals.L1 -> Key_Switch.Terminals.IN1: "Phase L1" {class: kabel_standard}
+Supply_1.Terminals.N1 -> Key_Switch.Terminals.IN2: "Neutral N1" {class: kabel_standard}
 
 # Verbindung COM1 an OUT vom Schlüsselschalter
-Key_Switch.Terminals.OUT1 -> Flow_Relais.Terminals.COM1: "Phase L1 geschaltet" {class: kabel_standard}
-Key_Switch.Terminals.OUT2 -> Flow_Relais.Terminals.COM2: "Neutralleiter geschaltet" {class: kabel_standard}
+Key_Switch.Terminals.OUT1 -> Flow_Relais.Terminals.COM1: "Switched L1" {class: kabel_standard}
+Key_Switch.Terminals.OUT2 -> Flow_Relais.Terminals.COM2: "Switched N2" {class: kabel_standard}
 
 # --- VERBINDUNGEN DURCHFLUSS RELAIS ZU EIN/AUSSCHALTER ---
 
 # Phase L1 (Kanal 1)
-Flow_Relais.Terminals.NO1 -> Power_Switch.Terminals.IN: "Phase L1 geschaltet" {class: kabel_standard}
-
-# Neutralleiter (Kanal 2)
-# Zuerst Verbindung vom Schlüsselschalter zum Durchfluss-Relais
-Key_Switch.Terminals.OUT2 -> Flow_Relais.Terminals.COM2: "Neutral geschaltet" {class: kabel_standard}
+Flow_Relais.Terminals.NO1 -> Power_Switch.Terminals.IN: "Switched L1" {class: kabel_standard}
 
 # Dann vom Durchfluss-Relais zum Ein-/Ausschalter
-Flow_Relais.Terminals.NO2 -> Power_Switch.Terminals.N_IN: "Neutral geschaltet" {class: kabel_standard}
+Flow_Relais.Terminals.NO2 -> Power_Switch.Terminals.N_IN: "Switched N2" {class: kabel_standard}
