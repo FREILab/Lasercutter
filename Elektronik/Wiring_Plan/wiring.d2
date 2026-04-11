@@ -194,6 +194,20 @@ Laser_PSU.Terminals.IN: { class: pin }
 Laser_PSU.Terminals.WP: { class: pin }
 Laser_PSU.Terminals.TH: { class: pin }
 Laser_PSU.Terminals.V5: { class: pin; label: "5V" }
+Laser_PSU.Terminals.AC1.class: pin
+Laser_PSU.Terminals.AC2.class: pin
+
+# --- PULL-UP WIDERSTAND (LASER WP) ---
+Laser_Pullup_10k.class: electronic_component
+Laser_Pullup_10k.label: "10k pull up"
+Laser_Pullup_10k.A.class: pin
+Laser_Pullup_10k.B.class: pin
+
+# --- LASER TH PULL-DOWN ---
+Laser_TH_Pulldown_10k.class: electronic_component
+Laser_TH_Pulldown_10k.label: "10k pull down (TH)"
+Laser_TH_Pulldown_10k.A.class: pin
+Laser_TH_Pulldown_10k.B.class: pin
 
 # --- MOTOREN ---
 Stepper_X: { class: end_device; label: "X-Stepper: ST4118M1206-A" }
@@ -330,6 +344,12 @@ Chiller_Alarm.Terminals.class: connector_group
 Chiller_Alarm.Terminals.COM.class: pin
 Chiller_Alarm.Terminals.NC.class: pin
 
+# --- WARNLEUCHTE ---
+Warnleuchte.class: end_device
+Warnleuchte.label: "Warnleuchte"
+Warnleuchte.AC1.class: pin
+Warnleuchte.AC2.class: pin
+
 # --- VERBINDUNGEN ---
 
 # X-Axis wiring
@@ -443,3 +463,30 @@ Water_Flow_Relais.Terminals.NC2 -> Ruida_644.CN2."5: WP1": "Water Protection" {c
 
 WP_10k.A -> Ruida_644.CN2."5: WP1": "Pull-Down" {class: kabel_standard}
 WP_10k.B -> Ruida_644.CN2."1: GND": "GND" {class: kabel_standard}
+
+# Vom Ein-/Ausschalter zum Laser Switch
+Power_Switch.Terminals.OUT -> Laser_Switch.Terminals.COM1: "L1 geschaltet" {class: kabel_standard}
+Power_Switch.Terminals.N_OUT -> Laser_Switch.Terminals.COM2: "N1 geschaltet" {class: kabel_standard}
+
+# Vom Laser Switch zur Warnleuchte
+Laser_Switch.Terminals.NO1 -> Warnleuchte.AC1 {class: kabel_standard}
+Laser_Switch.Terminals.NO2 -> Warnleuchte.AC2 {class: kabel_standard}
+
+# Vom Laser Switch zur Laser PSU (AC-Versorgung)
+Laser_Switch.Terminals.NO1 -> Laser_PSU.Terminals.AC1: "L1 Laser" {class: kabel_standard}
+Laser_Switch.Terminals.NO2 -> Laser_PSU.Terminals.AC2: "N1 Laser" {class: kabel_standard}
+
+# --- VERBINDUNGEN PULL-UP ---
+# Pin A wird mit dem Wasserschutz-Eingang (WP) verbunden
+Laser_Pullup_10k.A -> Laser_PSU.Terminals.WP: "Pull-Up" {class: kabel_standard}
+
+# Pin B wird mit dem 5V Ausgang der Laser PSU verbunden
+Laser_Pullup_10k.B -> Laser_PSU.Terminals.V5: "5V" {class: kabel_standard}
+Laser_Pullup_10k.B -> Laser_PSU.Terminals.IN: "Pull-Up" {class: kabel_standard}
+
+# Verbindungen
+# Pin A an den TH-Eingang (Trigger High)
+Laser_TH_Pulldown_10k.A -> Laser_PSU.Terminals.TH: "Pull-Down" {class: kabel_standard}
+
+# Pin B an Ground
+Laser_TH_Pulldown_10k.B -> Laser_PSU.Terminals.GND: "GND" {class: kabel_standard}
