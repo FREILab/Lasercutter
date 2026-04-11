@@ -45,6 +45,15 @@ classes: {
     shape: rectangle
     style: { stroke: "#000000"; stroke-width: 2; fill: "#ffffff" }
   }
+
+  electronic_component: {
+    shape: parallelogram
+    style: { 
+      stroke: "#e67e22"
+      stroke-width: 2
+      fill: "#fbeee6" 
+  }
+}
 }
 
 # --- RUIDA CONTROLLER ---
@@ -121,6 +130,12 @@ Ruida_644.CN6."2: L-ON2": { class: pin }
 Ruida_644.CN6."3: LPWM2": { class: pin }
 Ruida_644.CN6."4: WP2": { class: pin }
 Ruida_644.CN6."5: L-AN2": { class: pin }
+
+# --- PULL-DOWN WIDERSTAND ---
+WP_10k.class: electronic_component
+WP_10k.label: "10k pull down"
+WP_10k.A.class: pin
+WP_10k.B.class: pin
 
 # --- MOTORTREIBER X ---
 DM860T_X: { class: complex_device; label: "DM860T (X)" }
@@ -264,6 +279,57 @@ PSU_24V.Terminals.N.class: pin
 PSU_24V.Terminals."24V".class: pin
 PSU_24V.Terminals."0V".class: pin
 
+# --- NOT-HALT (E-Stop) ---
+E_Stop.class: end_device
+E_Stop.label: "Not-Halt (E-Stop)"
+E_Stop.Terminals.class: connector_group
+E_Stop.Terminals.COM1.class: pin
+E_Stop.Terminals.NC1.class: pin
+E_Stop.Terminals.COM2.class: pin
+E_Stop.Terminals.NC2.class: pin
+
+# --- DOOR SWITCHES ---
+DOOR1.class: end_device
+DOOR1.label: "Türschalter 1"
+DOOR1.COM.class: pin
+DOOR1.NO.class: pin
+
+DOOR2.class: end_device
+DOOR2.label: "Türschalter 2"
+DOOR2.COM.class: pin
+DOOR2.NO.class: pin
+
+DOOR3.class: end_device
+DOOR3.label: "Türschalter 3"
+DOOR3.COM.class: pin
+DOOR3.NC.class: pin
+
+DOOR4.class: end_device
+DOOR4.label: "Türschalter 4"
+DOOR4.COM.class: pin
+DOOR4.NC.class: pin
+
+# --- WATER FLOW RELAIS (Signal-Ebene) ---
+# Hinweis: Dies ist zusätzlich zum bestehenden Flow_Relais im AC-Kreis
+Water_Flow_Relais.class: end_device
+Water_Flow_Relais.label: "Water Flow Relais"
+Water_Flow_Relais.Terminals.class: connector_group
+Water_Flow_Relais.Terminals.COM1.class: pin
+Water_Flow_Relais.Terminals.NO1.class: pin
+Water_Flow_Relais.Terminals.NC1.class: pin
+Water_Flow_Relais.Terminals.COM2.class: pin
+Water_Flow_Relais.Terminals.NO2.class: pin
+Water_Flow_Relais.Terminals.NC2.class: pin
+Water_Flow_Relais.Terminals.COIL1.class: pin
+Water_Flow_Relais.Terminals.COIL2.class: pin
+
+# --- CHILLER ALARM ---
+Chiller_Alarm.class: end_device
+Chiller_Alarm.label: "Chiller Alarm Eingang"
+Chiller_Alarm.Terminals.class: connector_group
+Chiller_Alarm.Terminals.COM.class: pin
+Chiller_Alarm.Terminals.NC.class: pin
+
 # --- VERBINDUNGEN ---
 
 # X-Axis wiring
@@ -334,3 +400,46 @@ Flow_Relais.Terminals.NO1 -> Power_Switch.Terminals.IN: "Switched L1" {class: ka
 
 # Dann vom Durchfluss-Relais zum Ein-/Ausschalter
 Flow_Relais.Terminals.NO2 -> Power_Switch.Terminals.N_IN: "Switched N2" {class: kabel_standard}
+
+# --- VERBINDUNGEN E-STOP (SIGNAL) ---
+
+# Kanal 1: Überwachung durch Ruida (DRPROC zu GND)
+Ruida_644.CN2."3: DRPROC" -> E_Stop.Terminals.COM1: "Protection Signal" {class: kabel_standard}
+
+# E-Stop NC1 führt nun weiter zu Türschalter 3 
+E_Stop.Terminals.NC1 -> DOOR3.COM {class: kabel_standard}
+
+# Türschalter 3 (NC) führt zu Türschalter 4 
+DOOR3.NC -> DOOR4.COM {class: kabel_standard}
+
+# Türschalter 4 (NC) schließt den Kreis nach GND 
+DOOR4.NC -> Ruida_644.CN2."1: GND": "GND" {class: kabel_standard}
+# --- VERBINDUNGEN LASER PROTECTION LOOP (WP) ---
+
+# Start der Kette: Laser Netzteil WP an Türschalter 1
+Laser_PSU.Terminals.WP -> DOOR1.COM: "WP Loop" {class: kabel_standard}
+
+# Türschalter 1 an Türschalter 2
+DOOR1.NO -> DOOR2.COM {class: kabel_standard}
+
+# Türschalter 2 an Durchfluss-Relais (Signal-Ebene)
+DOOR2.NO -> Water_Flow_Relais.Terminals.COM1 {class: kabel_standard}
+
+# Durchfluss-Relais an Chiller Alarm
+Water_Flow_Relais.Terminals.NO1 -> Chiller_Alarm.Terminals.COM {class: kabel_standard}
+
+# Chiller Alarm an Laser Ground (Abschluss der Sicherheitskette)
+Chiller_Alarm.Terminals.NC -> Laser_PSU.Terminals.GND: "GND" {class: kabel_standard}
+
+# --- VERBINDUNGEN RUIDA WATER PROTECTION (Signal-Ebene) ---
+
+# Versorgung des Relais-Kontakts mit 24V vom Netzteil
+PSU_24V.Terminals."24V" -> Water_Flow_Relais.Terminals.COM2: "24V Signal" {class: kabel_standard}
+
+# Signalweiterleitung vom Relais zum Ruida WP-Eingang (Port CN2, Pin 5)
+Water_Flow_Relais.Terminals.NC2 -> Ruida_644.CN2."5: WP1": "Water Protection" {class: kabel_standard}
+
+# --- Pull Widerstände ---
+
+WP_10k.A -> Ruida_644.CN2."5: WP1": "Pull-Down" {class: kabel_standard}
+WP_10k.B -> Ruida_644.CN2."1: GND": "GND" {class: kabel_standard}
