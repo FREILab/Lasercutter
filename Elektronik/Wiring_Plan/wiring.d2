@@ -1,10 +1,11 @@
 vars: {
   d2-config: {
     layout-engine: dagre
+    #layout-engine: elk
   }
 }
 
-direction: down
+direction: right
 
 # Globaler Hintergrund
 style.fill: "#f4f4f9"
@@ -142,6 +143,8 @@ DM860T_X.P3."A+": { class: pin }
 DM860T_X.P3."A-": { class: pin }
 DM860T_X.P3."B+": { class: pin }
 DM860T_X.P3."B-": { class: pin }
+DM860T_X.P3."AC1": { class: pin }
+DM860T_X.P3."AC2": { class: pin }
 
 # --- MOTORTREIBER Y ---
 DM860T_Y: { class: complex_device; label: "DM860T (Y)" }
@@ -164,6 +167,8 @@ DM860T_Y.P3."A+": { class: pin }
 DM860T_Y.P3."A-": { class: pin }
 DM860T_Y.P3."B+": { class: pin }
 DM860T_Y.P3."B-": { class: pin }
+DM860T_Y.P3."AC1": { class: pin }
+DM860T_Y.P3."AC2": { class: pin }
 
 # --- LASER PSU ---
 Laser_PSU: { class: complex_device; label: "Laser PSU" }
@@ -183,6 +188,72 @@ Stepper_X."B+": { class: pin }; Stepper_X."B-": { class: pin }
 Stepper_Y: { class: end_device; label: "Y-Stepper: PKP266D28A2" }
 Stepper_Y."A+": { class: pin }; Stepper_Y."A-": { class: pin }
 Stepper_Y."B+": { class: pin }; Stepper_Y."B-": { class: pin }
+
+# --- NETZTEILE und Power Distribution---
+
+# --- GLOBALER STROMANSCHLUSS ---
+Global_Plug.class: end_device
+Global_Plug.label: "Netzanschluss (AC)"
+Global_Plug.Terminals.class: connector_group
+Global_Plug.Terminals.L1.class: pin
+Global_Plug.Terminals.L2.class: pin
+Global_Plug.Terminals.N.class: pin
+
+# --- SCHLÜSSELSCHALTER ---
+Key_Switch.class: end_device
+Key_Switch.label: "Schlüsselschalter"
+Key_Switch.Terminals.class: connector_group
+Key_Switch.Terminals.IN1.class: pin
+Key_Switch.Terminals.IN2.class: pin
+Key_Switch.Terminals.OUT1.class: pin
+Key_Switch.Terminals.OUT2.class: pin
+
+# --- LV RELAIS ---
+LV_Relais.class: end_device
+LV_Relais.label: "LV Relais"
+LV_Relais.Terminals.class: connector_group
+LV_Relais.Terminals.COM.class: pin
+LV_Relais.Terminals.NO.class: pin
+LV_Relais.Terminals.COIL1.class: pin
+LV_Relais.Terminals.COIL2.class: pin
+
+# --- DURCHFLUSS RELAIS ---
+Flow_Relais.class: end_device
+Flow_Relais.label: "Durchfluss Relais"
+Flow_Relais.Terminals.class: connector_group
+Flow_Relais.Terminals.COM1.class: pin
+Flow_Relais.Terminals.NO1.class: pin
+Flow_Relais.Terminals.COM2.class: pin
+Flow_Relais.Terminals.NO2.class: pin
+Flow_Relais.Terminals.COIL1.class: pin
+Flow_Relais.Terminals.COIL2.class: pin
+
+# --- EIN/AUSSCHALTER ---
+Power_Switch.class: end_device
+Power_Switch.label: "Ein-/Ausschalter"
+Power_Switch.Terminals.class: connector_group
+Power_Switch.Terminals.IN.class: pin
+Power_Switch.Terminals.OUT.class: pin
+Power_Switch.Terminals.N_IN.class: pin
+Power_Switch.Terminals.N_OUT.class: pin
+
+# --- 48V Supply ---
+PSU_48V.class: end_device
+PSU_48V.label: "Netzteil 48V"
+PSU_48V.Terminals.class: connector_group
+PSU_48V.Terminals.L.class: pin
+PSU_48V.Terminals.N.class: pin
+PSU_48V.Terminals."+48V".class: pin
+PSU_48V.Terminals."0V".class: pin
+
+# --- 24V Supply ---
+PSU_24V.class: end_device
+PSU_24V.label: "Netzteil 24V"
+PSU_24V.Terminals.class: connector_group
+PSU_24V.Terminals.L.class: pin
+PSU_24V.Terminals.N.class: pin
+PSU_24V.Terminals."24V".class: pin
+PSU_24V.Terminals."0V".class: pin
 
 # --- VERBINDUNGEN ---
 
@@ -212,3 +283,48 @@ DM860T_Y.P3."B-" -> Stepper_Y."B-" {class: kabel_standard}
 Ruida_644.CN5.GND -> Laser_PSU.Terminals.GND: "GND" {class: kabel_standard}
 Ruida_644.CN5.LON1 -> Laser_PSU.Terminals.TL: "Fire" {class: kabel_standard}
 Ruida_644.CN5.LPWM1 -> Laser_PSU.Terminals.IN: "PWM" {class: kabel_standard}
+
+# --- STROMVERBINDUNGEN ---
+
+# Ruida 24V Versorgung über Port CN1 
+PSU_24V.Terminals."24V" -> Ruida_644.CN1."6: +24V": "24V DC" {class: kabel_standard}
+PSU_24V.Terminals."0V" -> Ruida_644.CN1."1: GND": "GND" {class: kabel_standard}
+
+# Phase L2 speist den gemeinsamen Kontakt
+Global_Plug.Terminals.L2 -> LV_Relais.Terminals.COM: "Phase L2" {class: kabel_standard}
+
+# Der Schließerkontakt (NO) versorgt beide Netzteile
+LV_Relais.Terminals.NO -> PSU_48V.Terminals.L: "Switched AC" {class: kabel_standard}
+LV_Relais.Terminals.NO -> PSU_24V.Terminals.L: "Switched AC" {class: kabel_standard}
+
+# --- VERBINDUNGEN NEUTRALLEITER ---
+Global_Plug.Terminals.N -> PSU_48V.Terminals.N: "Neutral" {class: kabel_standard}
+Global_Plug.Terminals.N -> PSU_24V.Terminals.N: "Neutral" {class: kabel_standard}
+
+# Motortreiber 48V Versorgung (X-Achse) [cite: 18, 20]
+PSU_48V.Terminals."+48V" -> DM860T_X.P3.AC1 {class: kabel_standard}
+PSU_48V.Terminals."0V" -> DM860T_X.P3.AC2 {class: kabel_standard}
+
+# Motortreiber 48V Versorgung (Y-Achse) [cite: 21, 23]
+PSU_48V.Terminals."+48V" -> DM860T_Y.P3.AC1 {class: kabel_standard}
+PSU_48V.Terminals."0V" -> DM860T_Y.P3.AC2 {class: kabel_standard}
+
+# --- VERBINDUNGEN SCHLÜSSELSCHALTER ---
+Global_Plug.Terminals.L1 -> Key_Switch.Terminals.IN1: "Phase L1" {class: kabel_standard}
+Global_Plug.Terminals.N -> Key_Switch.Terminals.IN2: "Neutralleiter N" {class: kabel_standard}
+
+# Verbindung COM1 an OUT vom Schlüsselschalter
+Key_Switch.Terminals.OUT1 -> Flow_Relais.Terminals.COM1: "Phase L1 geschaltet" {class: kabel_standard}
+Key_Switch.Terminals.OUT2 -> Flow_Relais.Terminals.COM2: "Neutralleiter geschaltet" {class: kabel_standard}
+
+# --- VERBINDUNGEN DURCHFLUSS RELAIS ZU EIN/AUSSCHALTER ---
+
+# Phase L1 (Kanal 1)
+Flow_Relais.Terminals.NO1 -> Power_Switch.Terminals.IN: "Phase L1 geschaltet" {class: kabel_standard}
+
+# Neutralleiter (Kanal 2)
+# Zuerst Verbindung vom Schlüsselschalter zum Durchfluss-Relais
+Key_Switch.Terminals.OUT2 -> Flow_Relais.Terminals.COM2: "Neutral geschaltet" {class: kabel_standard}
+
+# Dann vom Durchfluss-Relais zum Ein-/Ausschalter
+Flow_Relais.Terminals.NO2 -> Power_Switch.Terminals.N_IN: "Neutral geschaltet" {class: kabel_standard}
