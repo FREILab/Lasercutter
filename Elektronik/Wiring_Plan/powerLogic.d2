@@ -1,0 +1,149 @@
+# power_logic.d2
+# Hier sind die Komponenten der primären Schaltkette ausgelagert
+vars: {
+  d2-config: {
+    layout-engine: dagre
+    #layout-engine: elk
+  }
+}
+
+direction: right
+
+# Globaler Hintergrund
+style.fill: "#f4f4f9"
+
+# 1. Styles & Klassen
+classes: {
+  kabel_standard: { style.stroke: "#000000"; style.stroke-width: 3 }
+  
+  pin: {
+    shape: rectangle
+    width: 80
+    height: 40
+    style: { font-size: 14; fill: "#ffffff" }
+  }
+
+  connector_group: {
+    shape: rectangle
+    style: { 
+      stroke: "#7f8c8d"
+      stroke-width: 1
+      stroke-dash: 5 
+      fill: transparent 
+    }
+  }
+
+  core_component: {
+    shape: rectangle
+    style: { stroke: "#ff0000"; stroke-width: 4; fill: "#fff2f2" }
+  }
+  
+  complex_device: {
+    shape: rectangle
+    style: { stroke: "#0000ff"; stroke-width: 3; fill: "#f2f7ff" }
+  }
+
+  end_device: {
+    shape: rectangle
+    style: { stroke: "#000000"; stroke-width: 2; fill: "#ffffff" }
+  }
+
+  electronic_component: {
+    shape: parallelogram
+    style: { 
+      stroke: "#e67e22"
+      stroke-width: 2
+      fill: "#fbeee6" 
+  }
+}
+}
+
+Supply_1: {
+  class: end_device
+  label: "Versorgung Phase 1"
+  Terminals: {
+    class: connector_group
+    L1.class: pin
+    N1.class: pin
+    PE1.class: pin
+  }
+}
+
+Key_Switch: {
+  class: end_device
+  label: "Schlüsselschalter"
+  Terminals: {
+    class: connector_group
+    IN1.class: pin
+    IN2.class: pin
+    OUT1.class: pin
+    OUT2.class: pin
+  }
+}
+
+Flow_Relais: {
+  class: end_device
+  label: "Durchfluss Relais"
+  Terminals: {
+    class: connector_group
+    COM1.class: pin
+    NO1.class: pin
+    COM2.class: pin
+    NO2.class: pin
+    COIL1.class: pin
+    COIL2.class: pin
+  }
+}
+
+Power_Switch: {
+  class: end_device
+  label: "Ein-/Ausschalter"
+  Terminals: {
+    class: connector_group
+    IN.class: pin
+    OUT.class: pin
+    N_IN.class: pin
+    N_OUT.class: pin
+  }
+}
+
+Laser_Switch: {
+  class: end_device
+  label: "Laser Switch (Sicherheit)"
+  Terminals: {
+    class: connector_group
+    COM1.class: pin; NO1.class: pin
+    COM2.class: pin; NO2.class: pin
+  }
+}
+
+# power_connections.d2
+
+# --- INTERNE VERKABELUNG (Power Block) ---
+Supply_1.Terminals.L1 -> Key_Switch.Terminals.IN1: "Phase L1" {class: kabel_standard}
+Supply_1.Terminals.N1 -> Key_Switch.Terminals.IN2: "Neutral N1" {class: kabel_standard}
+
+Key_Switch.Terminals.OUT1 -> Flow_Relais.Terminals.COM1: "Switched L1" {class: kabel_standard}
+Key_Switch.Terminals.OUT2 -> Flow_Relais.Terminals.COM2: "Switched N2" {class: kabel_standard}
+
+Flow_Relais.Terminals.NO1 -> Power_Switch.Terminals.IN: "Switched L1" {class: kabel_standard}
+Flow_Relais.Terminals.NO2 -> Power_Switch.Terminals.N_IN: "Switched N2" {class: kabel_standard}
+
+Power_Switch.Terminals.OUT -> Laser_Switch.Terminals.COM1: "L1 geschaltet" {class: kabel_standard}
+Power_Switch.Terminals.N_OUT -> Laser_Switch.Terminals.COM2: "N1 geschaltet" {class: kabel_standard}
+
+# --- AUSGÄNGE ZU ANDEREN BLÄTTERN (Off-Sheet Connectors) ---
+
+# Ausgang zur Warnleuchte
+Laser_Switch.Terminals.NO1 -> OSC_WARN_L: "L1" {class: kabel_standard}
+Laser_Switch.Terminals.NO2 -> OSC_WARN_N: "N1" {class: kabel_standard}
+
+OSC_WARN_L: "TO SHEET: ALARMS (Warnleuchte L)" {class: off_sheet}
+OSC_WARN_N: "TO SHEET: ALARMS (Warnleuchte N)" {class: off_sheet}
+
+# Ausgang zur Laser PSU (AC Versorgung)
+Laser_Switch.Terminals.NO1 -> OSC_LPSU_L: "L1 Laser" {class: kabel_standard}
+Laser_Switch.Terminals.NO2 -> OSC_LPSU_N: "N1 Laser" {class: kabel_standard}
+
+OSC_LPSU_L: "TO SHEET: LASER (PSU AC L)" {class: off_sheet}
+OSC_LPSU_N: "TO SHEET: LASER (PSU AC N)" {class: off_sheet}
