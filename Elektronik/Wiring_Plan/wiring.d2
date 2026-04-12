@@ -131,11 +131,19 @@ Ruida_644.CN6."3: LPWM2": { class: pin }
 Ruida_644.CN6."4: WP2": { class: pin }
 Ruida_644.CN6."5: L-AN2": { class: pin }
 
+Ruida_644.HMI: { class: connector_group; label: "HMI Port" }
+Ruida_644.HMI."HMI": { class: pin }
+
 # --- PULL-DOWN WIDERSTAND ---
 WP_10k.class: electronic_component
 WP_10k.label: "10k pull down"
 WP_10k.A.class: pin
 WP_10k.B.class: pin
+
+# --- LCD ---
+LCD: { class: core_component; label: "LCD HMI Panel" }
+LCD.Terminals: { class: connector_group }
+LCD.Terminals."HMI": { class: pin }
 
 # --- MOTORTREIBER X ---
 DM860T_X: { class: complex_device; label: "DM860T (X)" }
@@ -323,6 +331,27 @@ DOOR4.label: "Türschalter 4"
 DOOR4.COM.class: pin
 DOOR4.NC.class: pin
 
+# --- ENDSCHALTER ---
+Endschalter_X.class: end_device
+Endschalter_X.label: "Endschalter X-Achse (NO)"
+Endschalter_X.COM.class: pin
+Endschalter_X.NO.class: pin
+
+Endschalter_Y.class: end_device
+Endschalter_Y.label: "Endschalter Y-Achse (NO)"
+Endschalter_Y.COM.class: pin
+Endschalter_Y.NO.class: pin
+
+# --- VERBINDUNGEN ENDSCHALTER AN CN4 ---
+
+# X-Achse: Verbindung an LMTX- und GND
+Endschalter_X.COM -> Ruida_644.CN4."1: GND" {class: kabel_standard}
+Endschalter_X.NO -> Ruida_644.CN4."4: LMTX-" {class: kabel_standard}
+
+# Y-Achse: Verbindung an LMTY- und GND
+Endschalter_Y.COM -> Ruida_644.CN4."1: GND" {class: kabel_standard}
+Endschalter_Y.NO -> Ruida_644.CN4."2: LMTY-" {class: kabel_standard}
+
 # --- WATER FLOW RELAIS (Signal-Ebene) ---
 # Hinweis: Dies ist zusätzlich zum bestehenden Flow_Relais im AC-Kreis
 Water_Flow_Relais.class: end_device
@@ -375,9 +404,9 @@ DM860T_Y.P3."B+" -> Stepper_Y."B+" {class: kabel_standard}
 DM860T_Y.P3."B-" -> Stepper_Y."B-" {class: kabel_standard}
 
 # Laser wiring
-Ruida_644.CN5.GND -> Laser_PSU.Terminals.GND: "GND" {class: kabel_standard}
-Ruida_644.CN5.LON1 -> Laser_PSU.Terminals.TL: "Fire" {class: kabel_standard}
-Ruida_644.CN5.LPWM1 -> Laser_PSU.Terminals.IN: "PWM" {class: kabel_standard}
+Ruida_644.CN5."1: GND" -> Laser_PSU.Terminals.GND: "GND" {class: kabel_standard}
+Ruida_644.CN5."2: L-ON1" -> Laser_PSU.Terminals.TL: "Fire" {class: kabel_standard}
+Ruida_644.CN5."3: LPWM1" -> Laser_PSU.Terminals.IN: "PWM" {class: kabel_standard}
 
 # --- STROMVERBINDUNGEN ---
 
@@ -457,11 +486,11 @@ Chiller_Alarm.Terminals.NC -> Laser_PSU.Terminals.GND: "GND" {class: kabel_stand
 PSU_24V.Terminals."24V" -> Water_Flow_Relais.Terminals.COM2: "24V Signal" {class: kabel_standard}
 
 # Signalweiterleitung vom Relais zum Ruida WP-Eingang (Port CN2, Pin 5)
-Water_Flow_Relais.Terminals.NC2 -> Ruida_644.CN2."5: WP1": "Water Protection" {class: kabel_standard}
+Water_Flow_Relais.Terminals.NC2 -> Ruida_644.CN5."4: WP1": "Water Protection" {class: kabel_standard}
 
 # --- Pull Widerstände ---
 
-WP_10k.A -> Ruida_644.CN2."5: WP1": "Pull-Down" {class: kabel_standard}
+WP_10k.A -> Ruida_644.CN5."4: WP1": "Pull-Down" {class: kabel_standard}
 WP_10k.B -> Ruida_644.CN2."1: GND": "GND" {class: kabel_standard}
 
 # Vom Ein-/Ausschalter zum Laser Switch
@@ -490,3 +519,6 @@ Laser_TH_Pulldown_10k.A -> Laser_PSU.Terminals.TH: "Pull-Down" {class: kabel_sta
 
 # Pin B an Ground
 Laser_TH_Pulldown_10k.B -> Laser_PSU.Terminals.GND: "GND" {class: kabel_standard}
+
+# --- VERBINDUNG HMI ---
+Ruida_644.HMI."HMI" -> LCD.Terminals."HMI": "HMI Cable" {class: kabel_standard}
