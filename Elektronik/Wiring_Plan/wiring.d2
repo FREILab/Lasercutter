@@ -211,12 +211,6 @@ Laser_Pullup_10k.label: "10k pull up"
 Laser_Pullup_10k.A.class: pin
 Laser_Pullup_10k.B.class: pin
 
-# --- LASER TH PULL-DOWN ---
-Laser_TH_Pulldown_10k.class: electronic_component
-Laser_TH_Pulldown_10k.label: "10k pull down (TH)"
-Laser_TH_Pulldown_10k.A.class: pin
-Laser_TH_Pulldown_10k.B.class: pin
-
 # --- MOTOREN ---
 Stepper_X: { class: end_device; label: "X-Stepper: ST4118M1206-A" }
 Stepper_X."A+": { class: pin }; Stepper_X."A-": { class: pin }
@@ -406,7 +400,7 @@ DM860T_Y.P3."B-" -> Stepper_Y."B-" {class: kabel_standard}
 # Laser wiring
 Ruida_644.CN5."1: GND" -> Laser_PSU.Terminals.GND: "GND" {class: kabel_standard}
 Ruida_644.CN5."2: L-ON1" -> Laser_PSU.Terminals.TL: "Fire" {class: kabel_standard}
-Ruida_644.CN5."3: LPWM1" -> Laser_PSU.Terminals.IN: "PWM" {class: kabel_standard}
+Ruida_644.CN5."5: L-AN1" -> Laser_PSU.Terminals.IN: "Analog Control" {class: kabel_standard}
 
 # --- STROMVERBINDUNGEN ---
 
@@ -513,12 +507,6 @@ Laser_Pullup_10k.A -> Laser_PSU.Terminals.WP: "Pull-Up" {class: kabel_standard}
 Laser_Pullup_10k.B -> Laser_PSU.Terminals.V5: "5V" {class: kabel_standard}
 Laser_Pullup_10k.B -> Laser_PSU.Terminals.IN: "Pull-Up" {class: kabel_standard}
 
-# Verbindungen
-# Pin A an den TH-Eingang (Trigger High)
-Laser_TH_Pulldown_10k.A -> Laser_PSU.Terminals.TH: "Pull-Down" {class: kabel_standard}
-
-# Pin B an Ground
-Laser_TH_Pulldown_10k.B -> Laser_PSU.Terminals.GND: "GND" {class: kabel_standard}
 
 # --- VERBINDUNG HMI ---
 Ruida_644.HMI."HMI" -> LCD.Terminals."HMI": "HMI Cable" {class: kabel_standard}
