@@ -42,6 +42,11 @@ classes: {
     style: { stroke: "#000000"; stroke-width: 2; fill: "#ffffff" }
   }
 
+  electronic_component: {
+    shape: parallelogram
+    style: { stroke: "#4b0082"; stroke-width: 2; fill: "#e8e9ff" }
+  }
+
   subsystem: {
     shape: rectangle
     style: { 
@@ -67,9 +72,26 @@ classes: {
     }
   }
 
+  cabinet: {
+    shape: rectangle
+    style: { stroke: "#696969"; stroke-width: 3; fill: "#d3d3d3" }
+  }
+
+  room: {
+    shape: rectangle
+    style: { 
+      stroke: "#daa520"
+      stroke-width: 2
+      stroke-dash: 4 
+      fill: "#f5f5dc" 
+    }
+  }
+
   # Verbindungs-Klassen für verschiedene Leitungstypen
   luft_leitung: { style.stroke: "#00ffff"; style.stroke-width: 3; style.stroke-dash: 5 }
   strom_230v: { style.stroke: "#ff0000"; style.stroke-width: 4 }
+  dc_24v: { style.stroke: "#32cd32"; style.stroke-width: 3 }
+  dc_48v: { style.stroke: "#006400"; style.stroke-width: 3; style.stroke-dash: 2 }
   control_signal: { style.stroke: "#0000ff"; style.stroke-width: 2; style.stroke-dash: 2 }
   optischer_pfad: { style.stroke: "#ff1493"; style.stroke-width: 3; style.stroke-dash: 2 }
 }
@@ -100,12 +122,21 @@ Laser_Cutter: {
     }
   }
 
-  # Y-Achse
-  Y_Achse: {
-    class: axis
-    label: "Y-Achse"
-    
-    # Motor für Y-Achse
+  # Laser Kammer
+  Laser_Kammer: {
+    class: room
+    label: "Laser Kammer"
+
+    Y_Achse: {
+      class: axis
+      label: "bewegliche Y-Achse"
+    }
+
+    Y_Schleppkette: {
+      class: mechanical_component
+      label: "Y-Schleppkette"
+    }
+
     Y_Motor: {
       class: motor
       label: "Y-Motor"
@@ -148,7 +179,7 @@ Laser_Cutter: {
 
   # Laser Kompartment
   Laser_Kompartment: {
-    class: compartment
+    class: room
     label: "Laser Kompartment"
     
     High_Power_Laser: {
@@ -159,6 +190,47 @@ Laser_Cutter: {
     Red_Dot_Laser: {
       class: laser_component
       label: "Red Dot Laser"
+    }
+  }
+
+  # Electrical Cabinet
+  Electrical_Cabinet: {
+    class: room
+    label: "Electrical Cabinet"
+    
+    PSU_24V: {
+      class: electronic_component
+      label: "24V Netzteil"
+    }
+
+    PSU_48V: {
+      class: electronic_component
+      label: "48V Netzteil"
+    }
+
+    Laser_PSU: {
+      class: electronic_component
+      label: "Laser PSU"
+    }
+
+    Ruida_Controller: {
+      class: electronic_component
+      label: "Ruida Controller"
+    }
+    
+    Schrittmotor_Treiber_X: {
+      class: electronic_component
+      label: "Schrittmotor Treiber X"
+    }
+    
+    Schrittmotor_Treiber_Y: {
+      class: electronic_component
+      label: "Schrittmotor Treiber Y"
+    }
+    
+    Schrittmotor_Treiber_Z: {
+      class: electronic_component
+      label: "Schrittmotor Treiber Z"
     }
   }
 
@@ -186,3 +258,11 @@ Laser_Cutter: {
 }
 
 # Verbindungen zwischen Blöcken
+Laser_Cutter.Electrical_Cabinet.PSU_24V -> Laser_Cutter.Electrical_Cabinet.Ruida_Controller: { class: dc_24v }
+Laser_Cutter.Electrical_Cabinet.PSU_48V -> Laser_Cutter.Electrical_Cabinet.Schrittmotor_Treiber_X: { class: dc_48v }
+Laser_Cutter.Electrical_Cabinet.PSU_48V -> Laser_Cutter.Electrical_Cabinet.Schrittmotor_Treiber_Y: { class: dc_48v }
+Laser_Cutter.Electrical_Cabinet.Ruida_Controller -> Laser_Cutter.Electrical_Cabinet.Laser_PSU: { class: control_signal }
+Laser_Cutter.Electrical_Cabinet.Laser_PSU -> Laser_Cutter.Laser_Kompartment.High_Power_Laser: { class: control_signal }
+Laser_Cutter.Electrical_Cabinet.Ruida_Controller -> Laser_Cutter.Electrical_Cabinet.Schrittmotor_Treiber_X: { class: control_signal }
+Laser_Cutter.Electrical_Cabinet.Ruida_Controller -> Laser_Cutter.Electrical_Cabinet.Schrittmotor_Treiber_Y: { class: control_signal }
+Laser_Cutter.Electrical_Cabinet.Ruida_Controller -> Laser_Cutter.Electrical_Cabinet.Schrittmotor_Treiber_Z: { class: control_signal }
