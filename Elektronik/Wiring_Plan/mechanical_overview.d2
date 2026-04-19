@@ -1,3 +1,9 @@
+# Verbindung RFID Leser zu PLC
+Laser_Cutter.Control_Box.RFID_Leser -> Laser_Cutter.Electrical_Cabinet.PLC: { class: control_signal }
+# 24V Versorgung für PLC
+Laser_Cutter.Electrical_Cabinet.PSU_24V -> Laser_Cutter.Electrical_Cabinet.PLC: { class: dc_24v }
+# Steuerleitung vom Start/Stop Knopf zum On/Off Relais
+Laser_Cutter.Control_Box.Start_Stop_Knopf -> Laser_Cutter.Electrical_Cabinet.On_Off_Relais: { class: control_signal }
 # Optischer Pfad: Red Dot Laser → Y-Spiegel
 Laser_Cutter.Laser_Kompartment.Red_Dot_Laser -> Laser_Cutter.Laser_Kammer.Y_Achse.Y_Spiegel: { class: optischer_pfad }
 
@@ -114,24 +120,18 @@ Laser_Cutter: {
   label: "Laser Cutter Gesamtübersicht"
 
   # Hier werden die Hauptblöcke definiert
-  # Beispiel: Rahmen, Achsen, Laser-Kopf usw.
-  
-  # Rahmen
-  Rahmen: {
-    class: frame
-    label: "Rahmen & Basis"
-  }
-
-  # X-Achse
-  X_Achse: {
-    class: axis
-    label: "X-Achse"
-  }
+ 
 
   # Laser Kammer
   Laser_Kammer: {
     class: room
     label: "Laser Kammer"
+
+      # Y-Endstop in der Laser Kammer
+      Y_Endstop: {
+        class: sensor
+        label: "Y-Endstop"
+      }
 
     Y_Achse: {
       class: axis
@@ -179,18 +179,6 @@ Laser_Cutter: {
     Y_Motor: {
       class: motor
       label: "Y-Motor"
-    }
-  }
-
-  # Z-Achse
-  Z_Achse: {
-    class: axis
-    label: "Z-Achse"
-    
-    # Motor für Z-Achse
-    Z_Motor: {
-      class: motor
-      label: "Z-Motor"
     }
   }
 
@@ -250,7 +238,47 @@ Laser_Cutter: {
       class: electronic_component
       label: "Schrittmotor Treiber Z"
     }
+      PLC: {
+        class: electronic_component
+        label: "PLC"
+      }
+
+      # Verbindung RFID Leser zu PLC
+      Phase_1: {
+        class: electronic_component
+        label: "Phase 1"
+      }
+      On_Off_Relais: {
+        class: electronic_component
+        label: "On/Off Relais"
+      }
+      Laser_Sicherheitsschalter: {
+        class: electronic_component
+        label: "Laser-Sicherheitsschalter"
+      }
   }
+
+    # Control Box
+    Control_Box: {
+      class: room
+      label: "Control Box"
+      Schluesselschalter: {
+        class: electronic_component
+        label: "Schlüsselschalter"
+      }
+      Start_Stop_Knopf: {
+        class: electronic_component
+        label: "Start/Stop Knopf"
+      }
+      Estop: {
+        class: electronic_component
+        label: "Estop"
+      }
+      RFID_Leser: {
+        class: electronic_component
+        label: "RFID Leser"
+      }
+    }
 
   # Sensoren
   Sensoren: {
@@ -293,6 +321,16 @@ Laser_Cutter.Electrical_Cabinet.Schrittmotor_Treiber_X -> Laser_Cutter.Laser_Kam
 
 # Verbindung Y-Schleppkette zu X-Motor
 Laser_Cutter.Laser_Kammer.Y_Schleppkette -> Laser_Cutter.Laser_Kammer.Y_Achse.X_Motor: { class: dc_48v }
+
+# Verbindung Y-Endstop zu Ruida Controller
+Laser_Cutter.Laser_Kammer.Y_Endstop -> Laser_Cutter.Electrical_Cabinet.Ruida_Controller: { class: control_signal }
+
+# Phase 1 Strompfad
+Laser_Cutter.Electrical_Cabinet.Phase_1 -> Laser_Cutter.Control_Box.Schluesselschalter: { class: strom_230v }
+Laser_Cutter.Control_Box.Schluesselschalter -> Laser_Cutter.Electrical_Cabinet.On_Off_Relais: { class: strom_230v }
+Laser_Cutter.Electrical_Cabinet.On_Off_Relais -> Laser_Cutter.Control_Box.Estop: { class: strom_230v }
+Laser_Cutter.Control_Box.Estop -> Laser_Cutter.Electrical_Cabinet.Laser_Sicherheitsschalter: { class: strom_230v }
+Laser_Cutter.Electrical_Cabinet.Laser_Sicherheitsschalter -> Laser_Cutter.Electrical_Cabinet.Laser_PSU: { class: strom_230v }
 
 # Optischer Pfad: High Power Laser → Y-Spiegel
 Laser_Cutter.Laser_Kompartment.High_Power_Laser -> Laser_Cutter.Laser_Kammer.Y_Achse.Y_Spiegel: { class: optischer_pfad }
