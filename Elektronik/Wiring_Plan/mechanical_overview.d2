@@ -1,3 +1,11 @@
+# Optischer Pfad: Red Dot Laser → Y-Spiegel
+Laser_Cutter.Laser_Kompartment.Red_Dot_Laser -> Laser_Cutter.Laser_Kammer.Y_Achse.Y_Spiegel: { class: optischer_pfad }
+
+# Optischer Pfad: Y-Spiegel → X-Spiegel (Red Dot)
+Laser_Cutter.Laser_Kammer.Y_Achse.Y_Spiegel -> Laser_Cutter.Laser_Kammer.Y_Achse.X_Kopf.X_Spiegel: { class: optischer_pfad }
+
+# Optischer Pfad: X-Spiegel → Linse (Red Dot)
+Laser_Cutter.Laser_Kammer.Y_Achse.X_Kopf.X_Spiegel -> Laser_Cutter.Laser_Kammer.Y_Achse.X_Kopf.Main_Linse: { class: optischer_pfad }
 vars: {
   d2-config: {
     layout-engine: dagre
@@ -40,6 +48,10 @@ classes: {
   mechanical_component: {
     shape: rectangle
     style: { stroke: "#000000"; stroke-width: 2; fill: "#ffffff" }
+  }
+  xkopf_component: {
+    shape: rectangle
+    style: { stroke: "#000000"; stroke-width: 2; fill: "#87ceeb" }
   }
 
   electronic_component: {
@@ -114,12 +126,6 @@ Laser_Cutter: {
   X_Achse: {
     class: axis
     label: "X-Achse"
-    
-    # Motor für X-Achse
-    X_Motor: {
-      class: motor
-      label: "X-Motor"
-    }
   }
 
   # Laser Kammer
@@ -130,6 +136,39 @@ Laser_Cutter: {
     Y_Achse: {
       class: axis
       label: "bewegliche Y-Achse"
+        # X-Motor ist auf der Y-Achse montiert
+        X_Motor: {
+          class: motor
+          label: "X-Motor"
+        }
+        # Beweglicher X-Kopf auf der Y-Achse
+        X_Kopf: {
+          class: xkopf_component
+          label: "beweglicher X-Kopf"
+          Main_Linse: {
+            class: mechanical_component
+            label: "Linse"
+          }
+            X_Spiegel: {
+              class: mechanical_component
+              label: "X-Spiegel"
+            }
+        }
+          # X-Schleppkette auf der Y-Achse
+          X_Schleppkette: {
+            class: mechanical_component
+            label: "X-Schleppkette"
+          }
+          # X-Endschalter auf der Y-Achse
+          X_Endschalter: {
+            class: sensor
+            label: "X-Endschalter"
+          }
+          # Y-Spiegel auf der Y-Achse
+          Y_Spiegel: {
+            class: mechanical_component
+            label: "Y-Spiegel"
+          }
     }
 
     Y_Schleppkette: {
@@ -155,27 +194,6 @@ Laser_Cutter: {
     }
   }
 
-  # Laser-Kopf
-  Laser_Kopf: {
-    class: laser_head
-    label: "Laser-Kopf"
-    
-    # Unterkomponenten des Laser-Kopfs
-    Luft_Auslass: {
-      class: mechanical_component
-      label: "Luft-Auslass"
-    }
-    
-    Hoehen_Sensor: {
-      class: sensor
-      label: "Höhen-Sensor"
-    }
-    
-    Main_Linse: {
-      class: mechanical_component
-      label: "Main Linse"
-    }
-  }
 
   # Laser Kompartment
   Laser_Kompartment: {
@@ -266,3 +284,27 @@ Laser_Cutter.Electrical_Cabinet.Laser_PSU -> Laser_Cutter.Laser_Kompartment.High
 Laser_Cutter.Electrical_Cabinet.Ruida_Controller -> Laser_Cutter.Electrical_Cabinet.Schrittmotor_Treiber_X: { class: control_signal }
 Laser_Cutter.Electrical_Cabinet.Ruida_Controller -> Laser_Cutter.Electrical_Cabinet.Schrittmotor_Treiber_Y: { class: control_signal }
 Laser_Cutter.Electrical_Cabinet.Ruida_Controller -> Laser_Cutter.Electrical_Cabinet.Schrittmotor_Treiber_Z: { class: control_signal }
+
+# Verbindung Schrittmotortreiber Y zu Y-Motor (hierarchisch korrekt)
+Laser_Cutter.Electrical_Cabinet.Schrittmotor_Treiber_Y -> Laser_Cutter.Laser_Kammer.Y_Motor: { class: dc_48v }
+
+# Verbindung Schrittmotortreiber X zu Y-Schleppkette
+Laser_Cutter.Electrical_Cabinet.Schrittmotor_Treiber_X -> Laser_Cutter.Laser_Kammer.Y_Schleppkette: { class: dc_48v }
+
+# Verbindung Y-Schleppkette zu X-Motor
+Laser_Cutter.Laser_Kammer.Y_Schleppkette -> Laser_Cutter.Laser_Kammer.Y_Achse.X_Motor: { class: dc_48v }
+
+# Optischer Pfad: High Power Laser → Y-Spiegel
+Laser_Cutter.Laser_Kompartment.High_Power_Laser -> Laser_Cutter.Laser_Kammer.Y_Achse.Y_Spiegel: { class: optischer_pfad }
+
+# Optischer Pfad: Y-Spiegel → X-Spiegel
+Laser_Cutter.Laser_Kammer.Y_Achse.Y_Spiegel -> Laser_Cutter.Laser_Kammer.Y_Achse.X_Kopf.X_Spiegel: { class: optischer_pfad }
+
+# Optischer Pfad: X-Spiegel → Linse
+Laser_Cutter.Laser_Kammer.Y_Achse.X_Kopf.X_Spiegel -> Laser_Cutter.Laser_Kammer.Y_Achse.X_Kopf.Main_Linse: { class: optischer_pfad }
+
+# Verbindung X-Endschalter (auf Y-Achse) zu Y-Schleppkette
+Laser_Cutter.Laser_Kammer.Y_Achse.X_Endschalter -> Laser_Cutter.Laser_Kammer.Y_Schleppkette: { class: control_signal }
+
+# Verbindung Y-Schleppkette zu Ruida Controller
+Laser_Cutter.Laser_Kammer.Y_Schleppkette -> Laser_Cutter.Electrical_Cabinet.Ruida_Controller: { class: control_signal }
